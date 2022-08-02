@@ -5,10 +5,14 @@ import Banner from '../components/Banner'
 import { Movie } from '../typings'
 import requests from '../utils/requests'
 import Row from '../components/Row'
+import useAuth from '../hooks/useAuth'
+import { useRecoilValue } from 'recoil'
+import Modal from '../components/Modal'
+import { modalState, movieState } from '../atoms/modalAtom.'
 
 interface Props {
   netflixOriginals: Movie[]
-  trendingNow: Movie[]
+  trendingNow: Movie[]  
   topRated: Movie[]
   actionMovies: Movie[]
   comedyMovies: Movie[]
@@ -17,9 +21,8 @@ interface Props {
   documentaries: Movie[]
 }
 
-
 const Home = ({
-  netflixOriginals,
+netflixOriginals,
   actionMovies,
   comedyMovies,
   documentaries,
@@ -28,6 +31,10 @@ const Home = ({
   topRated,
   trendingNow,
  }: Props) => {
+  const { loading } = useAuth()
+  const showModal = useRecoilValue(modalState)
+  if(loading) return null
+
   return (
     <div className='relative h-screen bg-gradient-to-b lg:h-[140vh]'>
       <Head>
@@ -38,19 +45,17 @@ const Home = ({
       <main className='relative pl-4 pd-24 lg:space-y-24 lg:pl-16'>
         <Banner netflixOriginals={netflixOriginals}/>
         <section className="md:space-y-24">
-        <section className="md:space-y-24">
           <Row title="Trending Now" movies={trendingNow} />
           <Row title="Top Rated" movies={topRated} />
           <Row title="Action Thrillers" movies={actionMovies} />
-
+          {/* My List Component */}
           <Row title="Comedies" movies={comedyMovies} />
           <Row title="Scary Movies" movies={horrorMovies} />
           <Row title="Romance Movies" movies={romanceMovies} />
           <Row title="Documentaries" movies={documentaries} />
         </section>
-        </section>
       </main>
-      {/* Module */}
+      { showModal && <Modal /> } 
     </div>
   )
 }
